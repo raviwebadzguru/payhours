@@ -122,6 +122,8 @@
                 <li><a href="{{ url('/setting/leave_categories/create') }}"><i class="fa fa-circle-o"></i>{{ __('New Leave Category') }}</a></li>
                 <li><a href="{{ url('/setting/leave_categories') }}"><i class="fa fa-circle-o"></i>{{ __('Leave Category List') }}</a></li>
                 <li><a href="{{ url('/hrm/application_lists') }}"><i class="fa fa-circle-o"></i> <span>{{ __('Leave Application List') }}</span></a></li>
+
+                <li><a href="{{ url('/hrm/leave') }}"><i class="fa fa-circle-o"></i> <span>{{ __('New Leave Apply') }}</span></a></li>
                 @endpermission
                 @permission('my-leave-application')
                 <li><a href="{{ url('/hrm/leave_application/create') }}"><i class="fa fa-circle-o"></i> <span>{{ __('New Leave Application') }}</span></a></li>
@@ -210,6 +212,9 @@
                 <li><a href="{{ url('/setting/award_categories') }}"><i class="fa fa-circle-o"></i> {{ __('Manage Award Categories') }}</a></li>
                 @permission('role')
                 <li><a href="{{ route('setting.role.index') }}"><i class="fa fa-circle-o"></i>{{ __('Role') }}</a></li>
+                @endpermission
+                @permission('manage-bankdetails')
+                <li><a href="{{ route('setting.bank_details.index') }}"><i class="fa fa-circle-o"></i>{{ __('Bank Details') }}</a></li>
                 @endpermission
             </ul>
         </li>

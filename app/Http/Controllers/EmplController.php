@@ -5,10 +5,14 @@ namespace App\Http\Controllers;
 use App\Designation;
 use App\Role;
 use App\User;
+use App\Payroll;
+use App\HraRate;
+use App\HraAreaPlace;
 use App\Department;
 use DB;
 use Illuminate\Http\Request;
 use PDF;
+use App\WorkingDay;
 
 class EmplController extends Controller {
 
@@ -47,16 +51,65 @@ class EmplController extends Controller {
 	 *
 	 * @return \Illuminate\Http\Response
 	 */
-	public function create() {
-		$designations = Designation::where('deletion_status', 0)
-			->where('publication_status', 1)
-			->orderBy('designation', 'ASC')
-			->select('id', 'designation')
-			->get()
-			->toArray();
-		$roles = Role::all();
+	public function create($id=null) {
 
-		return view('administrator.people.employee.add_employee', compact('designations', 'roles')); 
+		if ($id) {
+			// Code to handle the case when ID is passed
+					
+				$designations = Designation::where('deletion_status', 0)
+				->where('publication_status', 1)
+				->orderBy('designation', 'ASC')
+				->select('id', 'designation')
+				->get()
+				->toArray();
+				$roles = Role::all();
+
+				$loca_places = HraAreaPlace::query()
+				->orderBy('loca_name', 'ASC')
+				->orderBy('places', 'ASC')
+				->get(['id', 'loca_name', 'places'])
+				->toArray();
+
+				$employees = User::query()
+					->leftjoin('designations as designations', 'users.designation_id', '=', 'designations.id')
+					->orderBy('users.name', 'ASC')
+					->where('users.access_label', '>=', 2)
+					->where('users.access_label', '<=', 3)
+					->get(['designations.designation', 'users.name', 'users.id'])
+					->toArray();
+				$employee_id = $id;
+					$sumOfWorkingHours = WorkingDay::sum('working_hours');
+					return view('administrator.people.employee.add_employee', compact('designations', 'roles', 'loca_places', 'employees', 'sumOfWorkingHours', 'employee_id')); 
+		} else {
+			// Code to handle the case when ID is not passed
+			$designations = Designation::where('deletion_status', 0)
+				->where('publication_status', 1)
+				->orderBy('designation', 'ASC')
+				->select('id', 'designation')
+				->get()
+				->toArray();
+			$roles = Role::all();
+
+			$loca_places = HraAreaPlace::query()
+				->orderBy('loca_name', 'ASC')
+				->orderBy('places', 'ASC')
+				->get(['id', 'loca_name', 'places'])
+				->toArray();
+
+				$employees = User::query()
+					->leftjoin('designations as designations', 'users.designation_id', '=', 'designations.id')
+					->orderBy('users.name', 'ASC')
+					->where('users.access_label', '>=', 2)
+					->where('users.access_label', '<=', 3)
+					->get(['designations.designation', 'users.name', 'users.id'])
+					->toArray();
+
+				$sumOfWorkingHours = WorkingDay::sum('working_hours');
+
+
+			return view('administrator.people.employee.add_employee', compact('designations', 'roles', 'loca_places', 'employees', 'sumOfWorkingHours')); 
+		}
+	
 	}
 
 	/**
@@ -95,6 +148,9 @@ class EmplController extends Controller {
 			'id_name' => 'nullable',
 			'id_number' => 'nullable|max:100',
 			'role' => 'required',
+			'employee_type' => 'required',
+			'resident_status' => 'required',
+			'no_of_dependent' => 'nullable|numeric',
 		], [
 			'designation_id.required' => 'The designation field is required.',
 			'contact_no_one.required' => 'The contact no field is required.',
@@ -109,9 +165,158 @@ class EmplController extends Controller {
 		$result->attachRole(Role::where('name', $request->role)->first());
 
 		if (!empty($inserted_id)) {
-			return redirect('/people/employees/create')->with('message', 'Add successfully.');
+
+			$salary = Payroll::where('user_id', $inserted_id)
+				->first();
+			// Set session variable to indicate which form was submitted
+			  // Set session variables
+			  session()->flash('submitted_form', 'add_employee_form');
+			return redirect('/people/employees/create/'.$inserted_id)->with('message', 'Add successfully.');
 		}
 		return redirect('/people/employees/create')->with('exception', 'Operation failed !');
+	}
+
+	/**
+	 * Store a newly created resource in Payroll storage.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @return \Illuminate\Http\Response
+	 */
+	public function payroll_store(Request $request) {
+		$salary = request()->validate([
+			'employee_type' => 'required',
+			'basic_salary' => 'required|numeric',
+			'house_rent_allowance' => 'nullable|numeric',
+			'medical_allowance' => 'nullable|numeric',
+			'special_allowance' => 'nullable|numeric',
+			'provident_fund_contribution' => 'nullable|numeric',
+			'other_allowance' => 'nullable|numeric',
+			'provident_fund_deduction' => 'nullable|numeric',
+			'other_deduction' => 'nullable|numeric',
+			'resident_status' => 'required',
+			'no_of_dependent' => 'nullable|numeric',
+			'hrly_salary_rate' => 'nullable',
+			'overtime_hr' => 'nullable|numeric',
+			'overtime_rate' => 'nullable|numeric',
+			'overtime_amt'  => 'nullable|numeric',
+			'sales_comm'  => 'nullable|numeric',
+			'electricity_allowance'  => 'nullable|numeric',
+			'security_allowance'  => 'nullable|numeric',
+			'tax_deduction_a'  => 'nullable|regex:/^\d+(\.\d{1,2})?$/',
+			'tax_deduction_b'  => 'nullable|regex:/^\d+(\.\d{1,2})?$/',
+			'hr_place' => 'required',
+			'hra_type' => 'required',
+			'hra_amount_per_week'  => 'nullable|numeric',
+			'va_type' => 'required',
+			'vehicle_allowance' => 'nullable|numeric',
+			'meals_tag'  => 'nullable',
+			'meals_allowance' => 'nullable|numeric',
+			'annual_salary' => 'required',
+		]);
+
+		$result = Payroll::create($salary + ['created_by' => auth()->user()->id, 'user_id' => $request->user_id]);
+		$inserted_id = $result->id;
+
+		if (!empty($inserted_id)) {
+
+			$salary = Payroll::where('user_id', $inserted_id)
+				->first();
+			
+			//payroll_id associated with user
+			User::where('id', $request->user_id)->update(['user_payroll_rel_id' => $inserted_id]);
+			// Set session variable to indicate which form was submitted
+			  // Set session variables
+			  session()->flash('submitted_form', 'add_payroll_form');
+			return redirect('/people/employees/create/'.$request->user_id)->with('message', 'Add successfully.');
+		}
+		
+		return redirect('/people/employees/create')->with('exception', 'Operation failed !');
+	}
+
+	/**
+	 * Update the specified resource in storage.
+	 *
+	 * @param  \Illuminate\Http\Request  $request
+	 * @param  \App\Payroll  $payroll
+	 * @return \Illuminate\Http\Response
+	 */
+	public function payroll_update(Request $request, $id) {
+		$salary = Payroll::find($id);
+		request()->validate([
+			'employee_type' => 'required',
+			'basic_salary' => 'required|numeric',
+			'house_rent_allowance' => 'nullable|numeric',
+			'medical_allowance' => 'nullable|numeric',
+			'special_allowance' => 'nullable|numeric',
+			'provident_fund_contribution' => 'nullable|numeric',
+			'other_allowance' => 'nullable|numeric',
+			'provident_fund_deduction' => 'nullable|numeric',
+			'other_deduction' => 'nullable|numeric',
+			'resident_status' => 'required',
+			'no_of_dependent' => 'nullable|numeric',
+			'hrly_salary_rate' => 'nullable|numeric',
+			'overtime_hr' => 'nullable|numeric',
+			'overtime_rate' => 'nullable|numeric',
+			'overtime_amt'  => 'nullable|numeric',
+			'sales_comm'  => 'nullable|numeric',
+			'electricity_allowance'  => 'nullable|numeric',
+			'security_allowance'  => 'nullable|numeric',
+			'tax_deduction_a'  => 'nullable|regex:/^\d+(\.\d{1,2})?$/',
+			'tax_deduction_b'  => 'nullable|regex:/^\d+(\.\d{1,2})?$/',
+			'hr_place' => 'required',
+			'hra_type' => 'required',
+			'hra_amount_per_week'  => 'nullable|numeric',
+			'va_type' => 'required',
+			'vehicle_allowance' => 'nullable|numeric',
+			'meals_tag'  => 'nullable',
+			'meals_allowance' => 'nullable|numeric',
+			'annual_salary' => 'required',
+		]);
+
+		$salary->employee_type = $request->get('employee_type');
+		$salary->basic_salary = $request->get('basic_salary');
+		$salary->house_rent_allowance = $request->get('house_rent_allowance');
+		$salary->medical_allowance = $request->get('medical_allowance');
+		$salary->special_allowance = $request->get('special_allowance'); // Telephone allowance
+		$salary->provident_fund_contribution = $request->get('provident_fund_contribution');
+		$salary->other_allowance = $request->get('other_allowance'); //	Servant Allowance
+		$salary->provident_fund_deduction = $request->get('provident_fund_deduction');
+		$salary->other_deduction = $request->get('other_deduction');
+		$salary->resident_status = $request->get('resident_status');
+		$salary->no_of_dependent = $request->get('no_of_dependent');
+		$salary->declaration_lodge_status = $request->get('declaration_lodge_status');
+		$salary->hrly_salary_rate = $request->get('hrly_salary_rate');
+		$salary->overtime_hr = $request->get('overtime_hr');
+		$salary->overtime_rate = $request->get('ovretime_rate');
+		$salary->overtime_amt = $request->get('overtime_amt');
+		$salary->sales_comm = $request->get('sales_comm');
+		$salary->electricity_allowance = $request->get('electricity_allowance');
+		$salary->security_allowance = $request->get('security_allowance');
+		$salary->tax_deduction_a = $request->get('tax_deduction_a');
+		$salary->tax_deduction_b = $request->get('tax_deduction_b');
+		$salary->hr_place = $request->get('hr_place');
+		$salary->hr_area = $request->get('hr_area');
+		$salary->hra_type = $request->get('hra_type');
+		$salary->hra_amount_per_week = $request->get('hra_amount_per_week');
+		$salary->va_type = $request->get('va_type');
+		$salary->vehicle_allowance = $request->get('vehicle_allowance');
+		$salary->meals_tag = $request->get('meals_tag');
+		$salary->meals_allowance = $request->get('meals_allowance');
+		$salary->annual_salary =  $request->get('annual_salary');
+		$affected_row = $salary->save();
+
+		if (!empty($affected_row)) {
+			return redirect('/hrm/payroll/salary-list')->with('message', 'Update successfully.');
+		}
+		return redirect('/hrm/payroll/salary-list')->with('exception', 'Operation failed !');
+
+		$result = Payroll::create($salary + ['created_by' => auth()->user()->id, 'user_id' => $request->user_id]);
+		$inserted_id = $result->id;
+
+		if (!empty($inserted_id)) {
+			return redirect('/hrm/payroll/salary-list')->with('message', 'Add successfully.');
+		}
+		return redirect('/hrm/payroll/salary-list')->with('exception', 'Operation failed !');
 	}
 
 	/**

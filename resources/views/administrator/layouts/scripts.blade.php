@@ -33,7 +33,14 @@
 <script src="{{ asset('public/backend/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.all.min.js') }}"></script>
 <!-- For Editor -->
 
- 
+<!-- Common JS for New Features JS -->
+
+<!-- Include jQuery and jQuery UI -->
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+@include('administrator.variables')
+<script src="{{ asset('public/backend/common.js') }}"></script>
+<!-- Common JS End -->
 
 <script>
     $(document).ready(function () {

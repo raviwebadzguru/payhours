@@ -45,7 +45,7 @@
         </div>
         <!-- /.Notification Box -->
         <div class="col-md-12">
-        <form action="<?php echo url('/hrm/attendance/get-report'); ?>" method="post">
+        <!-- <form action="<?php echo url('/hrm/attendance/get-report'); ?>" method="post">
           <div class="row">
             <div class="col-lg-3 col-md-6 col-sm-12">
               <input type="date" name="start" class="form-control form-control-sm rounded-0">
@@ -59,7 +59,7 @@
               <button type="submit" class="btn btn-primary btn-sm rounded-0 bg-gradient-primary "><i class="fa fa-file"></i> Show Attendance</button>
             </div>
           </div>
-        </form>
+        </form> -->
           <form action="<?php echo url('/hrm/attendance/get-report'); ?>" method="post">
             <?php echo csrf_field(); ?>
 

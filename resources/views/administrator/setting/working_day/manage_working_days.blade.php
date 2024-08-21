@@ -47,16 +47,48 @@
           <!-- /.Notification Box -->
           <div class="col-md-12">
             <div class="form-group">
-              @foreach($working_days as $working_day)
-              <label class="checkbox-inline">
-                @if($working_day['working_status'] == 1)
-                <input type="hidden" name="day[]" value="1"><input checked type="checkbox" onclick="this.previousSibling.value=1-this.previousSibling.value">
-                @else
-                <input type="hidden" name="day[]" value="0"><input type="checkbox" onclick="this.previousSibling.value=1-this.previousSibling.value">
-                @endif
-                <span>{{ $working_day['day'] }}</span>
-              </label>
-              @endforeach
+              <div class="row">
+                  @foreach($working_days as $working_day)
+                  @if( $working_day['working_hours']!=0)
+                    <div class="col-md-1 custom-padding">
+                      <label class="checkbox-inline">
+                          @if($working_day['working_status'] == 1)
+                          <input type="hidden" name="day[]" value="1"><input checked type="checkbox" onclick="this.previousSibling.value=1-this.previousSibling.value">
+                          @else
+                          <input type="hidden" name="day[]" value="0"><input type="checkbox" onclick="this.previousSibling.value=1-this.previousSibling.value">
+                          @endif
+                          <span>{{ $working_day['day'] }}</span><br/>
+                          <span>Hours: <input type="text" class="form-control" name="working_hours[]" id="working_hours" value="{{ $working_day['working_hours'] }}" /></span>
+                      </label>
+                    </div>
+                  @else
+                  <div class="col-md-1 custom-padding">
+                      <label class="checkbox-inline">
+                          @if($working_day['working_status'] == 1)
+                          <input type="hidden" name="day[]" value="1"><input checked type="checkbox" onclick="this.previousSibling.value=1-this.previousSibling.value">
+                          @else
+                          <input type="hidden" name="day[]" value="0"><input type="checkbox" onclick="this.previousSibling.value=1-this.previousSibling.value">
+                          @endif
+                          <span>{{ $working_day['day'] }}</span><br/>
+                          <span>Hours: <input type="text" class="form-control" name="working_hours[]" id="working_hours" value="{{ $working_day['working_hours'] }}" /></span>
+                      </label>
+                    </div>
+                    @endif
+                  @endforeach
+              </div>
+                <!-- @foreach($working_days as $working_day)
+                <label class="checkbox-inline">
+                  @if($working_day['working_status'] == 1)
+                  <input type="hidden" name="day[]" value="1"><input checked type="checkbox" onclick="this.previousSibling.value=1-this.previousSibling.value">
+                  @else
+                  <input type="hidden" name="day[]" value="0"><input type="checkbox" onclick="this.previousSibling.value=1-this.previousSibling.value">
+                  @endif
+                  <span>{{ $working_day['day'] }}</span><br/>
+                  @if( $working_day['working_hours']!=0)
+                  <span>Hours: {{ $working_day['working_hours'] }}</span>
+                  @endif
+                </label>
+                @endforeach -->
             </div>
           </div>
         </div>
@@ -70,4 +102,11 @@
   </section>
   <!-- /.content -->
 </div>
+<style>
+    .custom-padding {
+        margin-right: 10px; /* Adjust the value as needed */
+    }
+   
+</style>
+
 @endsection

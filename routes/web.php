@@ -40,6 +40,18 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::get('/setting/leave_categories/edit/{id}', 'LeaveCatController@edit');
 	Route::post('/setting/leave_categories/update/{id}', 'LeaveCatController@update');
 	Route::get('/setting/leave_categories/delete/{id}', 'LeaveCatController@destroy');
+
+
+
+    Route::get('/hrm/leave/apply', 'LeaveApplicationController@create')->name('leave.create');
+    Route::post('/hrm/leave/apply', 'LeaveApplicationController@store')->name('leave.store');
+    Route::get('/hrm/leave', 'LeaveApplicationController@index')->name('leave.index');
+	Route::get('/hrm/leave/calculate', 'LeaveApplicationController@calculateLeave')->name('leave.calculate');
+	Route::get('/hrm/leave/taken-dates/{id}', 'LeaveApplicationController@getTakenDates')->name('leave.takenDates');
+	Route::get('/hrm/leave/{id}/edit', 'LeaveApplicationController@edit')->name('leave.edit');
+	Route::put('/hrm/leave/{id}', 'LeaveApplicationController@update')->name('leave.update');
+
+
 	
 	//Application Listes//
 	Route::get('/hrm/application_lists', 'LeaveAppController@apllicationLists');
@@ -121,8 +133,10 @@ Route::group(['middleware' => 'auth'], function () {
 	// Employee Section //
 	Route::get('/people/employees', 'EmplController@index');
 	Route::get('/people/employees/print', 'EmplController@print');
-	Route::get('/people/employees/create', 'EmplController@create');
+	Route::get('/people/employees/create/{id?}', 'EmplController@create');
 	Route::post('/people/employees/store', 'EmplController@store');
+	Route::post('/people/employees/payroll_store', 'EmplController@payroll_store');
+	Route::post('/people/employees/empl_contact_store', 'EmplController@empl_contact_store');
 	Route::get('/people/employees/active/{id}', 'EmplController@active');
 	Route::get('/people/employees/deactive/{id}', 'EmplController@deactive');
 	Route::get('/people/employees/details/{id}', 'EmplController@show');
@@ -314,5 +328,30 @@ Route::group(['middleware' => 'auth'], function () {
 	Route::post('/hrm/employee-awards/update/{id}', 'EmployeeAwardController@update');
 	Route::get('/hrm/employee-awards/details/{id}', 'EmployeeAwardController@show');
 	Route::get('/hrm/employee-awards/delete/{id}', 'EmployeeAwardController@destroy');
+
+	//Overtime
+	Route::get('/setting/overtime', 'OvertimeController@index');
+	Route::get('/setting/overtime/create', 'OvertimeController@create');
+	Route::post('/setting/overtime/store', 'OvertimeController@store');
+	Route::get('/setting/overtime/edit/{id}', 'OvertimeController@edit');
+	Route::post('/setting/overtime/update/{id}', 'OvertimeController@update');
+	Route::get('/setting/overtime/published/{id}', 'OvertimeController@published');
+	Route::get('/setting/overtime/unpublished/{id}', 'OvertimeController@unpublished');
+	Route::get('/setting/overtime/delete/{id}', 'OvertimeController@destroy');
+
+	//Employee Contact
+	Route::post('employee_contacts/store/{employee_id?}', 'EmplContactController@store');
+	Route::post('employee_contacts/update/{employee_contact_id}', 'EmplContactController@update');
+
+	//Bank Detail
+	Route::get('/setting/bank_details', 'BankDetailController@index')->name('setting.bank_details.index');
+	Route::get('/setting/bank_details/create', 'BankDetailController@create');
+	Route::post('/setting/bank_details/store', 'BankDetailController@store');
+	Route::get('/setting/bank_details/edit/{id}', 'BankDetailController@edit');
+	Route::post('/setting/bank_details/update/{id}', 'BankDetailController@update');
+	Route::get('/setting/bank_details/published/{id}', 'BankDetailController@published');
+	Route::get('/setting/bank_details/unpublished/{id}', 'BankDetailController@unpublished');
+	Route::get('/setting/bank_details/delete/{id}', 'BankDetailController@destroy');
+
 
 });

@@ -50,16 +50,48 @@
           <!-- /.Notification Box -->
           <div class="col-md-12">
             <div class="form-group">
-              <?php $__currentLoopData = $working_days; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $working_day): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-              <label class="checkbox-inline">
-                <?php if($working_day['working_status'] == 1): ?>
-                <input type="hidden" name="day[]" value="1"><input checked type="checkbox" onclick="this.previousSibling.value=1-this.previousSibling.value">
-                <?php else: ?>
-                <input type="hidden" name="day[]" value="0"><input type="checkbox" onclick="this.previousSibling.value=1-this.previousSibling.value">
-                <?php endif; ?>
-                <span><?php echo $working_day['day']; ?></span>
-              </label>
-              <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+              <div class="row">
+                  <?php $__currentLoopData = $working_days; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $working_day): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                  <?php if( $working_day['working_hours']!=0): ?>
+                    <div class="col-md-1 custom-padding">
+                      <label class="checkbox-inline">
+                          <?php if($working_day['working_status'] == 1): ?>
+                          <input type="hidden" name="day[]" value="1"><input checked type="checkbox" onclick="this.previousSibling.value=1-this.previousSibling.value">
+                          <?php else: ?>
+                          <input type="hidden" name="day[]" value="0"><input type="checkbox" onclick="this.previousSibling.value=1-this.previousSibling.value">
+                          <?php endif; ?>
+                          <span><?php echo $working_day['day']; ?></span><br/>
+                          <span>Hours: <input type="text" class="form-control" name="working_hours[]" id="working_hours" value="<?php echo $working_day['working_hours']; ?>" /></span>
+                      </label>
+                    </div>
+                  <?php else: ?>
+                  <div class="col-md-1 custom-padding">
+                      <label class="checkbox-inline">
+                          <?php if($working_day['working_status'] == 1): ?>
+                          <input type="hidden" name="day[]" value="1"><input checked type="checkbox" onclick="this.previousSibling.value=1-this.previousSibling.value">
+                          <?php else: ?>
+                          <input type="hidden" name="day[]" value="0"><input type="checkbox" onclick="this.previousSibling.value=1-this.previousSibling.value">
+                          <?php endif; ?>
+                          <span><?php echo $working_day['day']; ?></span><br/>
+                          <span>Hours: <input type="text" class="form-control" name="working_hours[]" id="working_hours" value="<?php echo $working_day['working_hours']; ?>" /></span>
+                      </label>
+                    </div>
+                    <?php endif; ?>
+                  <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+              </div>
+                <!-- <?php $__currentLoopData = $working_days; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $working_day): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                <label class="checkbox-inline">
+                  <?php if($working_day['working_status'] == 1): ?>
+                  <input type="hidden" name="day[]" value="1"><input checked type="checkbox" onclick="this.previousSibling.value=1-this.previousSibling.value">
+                  <?php else: ?>
+                  <input type="hidden" name="day[]" value="0"><input type="checkbox" onclick="this.previousSibling.value=1-this.previousSibling.value">
+                  <?php endif; ?>
+                  <span><?php echo $working_day['day']; ?></span><br/>
+                  <?php if( $working_day['working_hours']!=0): ?>
+                  <span>Hours: <?php echo $working_day['working_hours']; ?></span>
+                  <?php endif; ?>
+                </label>
+                <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?> -->
             </div>
           </div>
         </div>
@@ -73,6 +105,13 @@
   </section>
   <!-- /.content -->
 </div>
+<style>
+    .custom-padding {
+        margin-right: 10px; /* Adjust the value as needed */
+    }
+   
+</style>
+
 <?php $__env->stopSection(); ?>
 
 <?php echo $__env->make('administrator.master', array_except(get_defined_vars(), array('__data', '__path')))->render(); ?>

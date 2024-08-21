@@ -1,16 +1,17 @@
-<?php $__env->startSection('title', __('Update Profile')); ?>
+<?php $__env->startSection('title', __('Add reference')); ?>
 
 <?php $__env->startSection('main_content'); ?>
 <div class="content-wrapper">
     <!-- Content Header (Page header) -->
     <section class="content-header">
         <h1>
-            <?php echo __('PROFILE'); ?>
+            <?php echo __('REFERENCES'); ?>
 
         </h1>
         <ol class="breadcrumb">
-            <li><a href="<?php echo url('/dashboard'); ?>"><i class="fa fa-dashboard"></i><?php echo __('Dashboard'); ?> </a></li>
-            <li class="active"><?php echo __('Update Profile'); ?></li>
+            <li><a href="<?php echo url('/dashboard'); ?>"><i class="fa fa-dashboard"></i> <?php echo __('Dashboard'); ?>Dashboard</a></li>
+            <li><a href="<?php echo url('/people/references'); ?>"><?php echo __('References'); ?></a></li>
+            <li class="active"><?php echo __('Add reference'); ?></li>
         </ol>
     </section>
 
@@ -20,7 +21,7 @@
         <!-- SELECT2 EXAMPLE -->
         <div class="box box-default">
             <div class="box-header with-border">
-                <h3 class="box-title"><?php echo __('Update Profile'); ?></h3>
+                <h3 class="box-title"><?php echo __('Add reference'); ?></h3>
 
                 <div class="box-tools pull-right">
                     <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i></button>
@@ -28,7 +29,7 @@
                 </div>
             </div>
             <!-- /.box-header -->
-            <form action="<?php echo url('/profile/update-profile'); ?>" method="post" name="user_edit_form" enctype="multipart/form-data">
+            <form action="<?php echo url('people/references/store'); ?>" method="post" name="reference_add_form">
                 <?php echo csrf_field(); ?>
 
                 <div class="box-body">
@@ -48,15 +49,15 @@
 
                             </div>
                             <?php else: ?>
-                            <p class="text-yellow"><?php echo __('You can update your profile. All'); ?> (<span class="text-danger">*</span>) <?php echo __('field are required.'); ?> </p>
+                            <p class="text-yellow"><?php echo __('Enter reference type details. All field are required.'); ?> </p>
                             <?php endif; ?>
                         </div>
                         <!-- /.Notification Box -->
 
                         <div class="col-md-6">
-                            <label for="name"><?php echo __('Full Name'); ?> <span class="text-danger">*</span></label>
+                            <label for="name"><?php echo __('Reference Name'); ?> <span class="text-danger">*</span></label>
                             <div class="form-group<?php echo $errors->has('name') ? ' has-error' : ''; ?> has-feedback">
-                                <input type="text" name="name" id="name" class="form-control" value="<?php echo $user['name']; ?>" placeholder="<?php echo __('Enter name..'); ?>">
+                                <input type="text" name="name" id="name" class="form-control" value="<?php echo old('name'); ?>" placeholder="<?php echo __('Enter name..'); ?>">
                                 <?php if($errors->has('name')): ?>
                                 <span class="help-block">
                                     <strong><?php echo $errors->first('name'); ?></strong>
@@ -65,15 +66,20 @@
                             </div>
                             <!-- /.form-group -->
 
-                            <label for="email"><?php echo __('Email'); ?> <span class="text-danger">*</span></label>
-                            <div class="form-group has-feedback">
-                                <input type="text" id="email" class="form-control" value="<?php echo $user['email']; ?>" disabled>
+                            <label for="email"><?php echo __('Email'); ?></label>
+                            <div class="form-group<?php echo $errors->has('email') ? ' has-error' : ''; ?> has-feedback">
+                                <input type="text" name="email" id="email" class="form-control" value="<?php echo old('email'); ?>" placeholder="<?php echo __('Enter email address..'); ?>">
+                                <?php if($errors->has('email')): ?>
+                                <span class="help-block">
+                                    <strong><?php echo $errors->first('email'); ?></strong>
+                                </span>
+                                <?php endif; ?>
                             </div>
                             <!-- /.form-group -->
 
-                            <label for="contact_no_one"><?php echo __('Contact No'); ?> <span class="text-danger">*</span></label>
+                            <label for="contact_no_one"><?php echo __('Contact No'); ?><span class="text-danger">*</span></label>
                             <div class="form-group<?php echo $errors->has('contact_no_one') ? ' has-error' : ''; ?> has-feedback">
-                                <input type="text" name="contact_no_one" id="contact_no_one" class="form-control" value="<?php echo $user['contact_no_one']; ?>" placeholder="<?php echo __('Enter contact no..'); ?>">
+                                <input type="text" name="contact_no_one" id="contact_no_one" class="form-control" value="<?php echo old('contact_no_one'); ?>" placeholder="<?php echo __('Enter contact no..'); ?>">
                                 <?php if($errors->has('contact_no_one')): ?>
                                 <span class="help-block">
                                     <strong><?php echo $errors->first('contact_no_one'); ?></strong>
@@ -82,50 +88,12 @@
                             </div>
                             <!-- /.form-group -->
 
-                            <label for="web"><?php echo __('Web'); ?> <span class="text-danger">*</span></label>
+                            <label for="web"><?php echo __('Web'); ?></label>
                             <div class="form-group<?php echo $errors->has('web') ? ' has-error' : ''; ?> has-feedback">
-                                <input type="text" name="web" id="web" class="form-control" value="<?php echo $user['web']; ?>" placeholder="<?php echo __('Enter contact no..'); ?>">
+                                <input type="text" name="web" id="web" class="form-control" value="<?php echo old('web'); ?>" placeholder="<?php echo __('Enter web..'); ?>">
                                 <?php if($errors->has('web')): ?>
                                 <span class="help-block">
                                     <strong><?php echo $errors->first('web'); ?></strong>
-                                </span>
-                                <?php endif; ?>
-                            </div>
-                            <!-- /.form-group -->
-
-                            <label for="avatar"><?php echo __('Profile Picture'); ?> <span class="text-danger">*</span></label>
-                            <div class="form-group<?php echo $errors->has('avatar') ? ' has-error' : ''; ?> has-feedback">
-                                <input type="file" name="avatar" id="avatar" class="form-control">
-                                <input type="hidden" name="previous_avater" value="<?php echo $user['avatar']; ?>">
-                                <?php if($errors->has('avatar')): ?>
-                                <span class="help-block">
-                                    <strong><?php echo $errors->first('avatar'); ?></strong>
-                                </span>
-                                <?php endif; ?>
-                            </div>
-                            <!-- /.form-group -->
-
-                        </div>
-                        <!-- /.col -->
-
-                        <div class="col-md-6">
-                            <label for="present_address"><?php echo __('Present Address'); ?> <span class="text-danger">*</span></label>
-                            <div class="form-group<?php echo $errors->has('present_address') ? ' has-error' : ''; ?> has-feedback">
-                                <input type="text" name="present_address" id="present_address" class="form-control" value="<?php echo $user['present_address']; ?>" placeholder="<?php echo __('Enter contact no..'); ?>">
-                                <?php if($errors->has('present_address')): ?>
-                                <span class="help-block">
-                                    <strong><?php echo $errors->first('present_address'); ?></strong>
-                                </span>
-                                <?php endif; ?>
-                            </div>
-                            <!-- /.form-group -->
-
-                            <label for="permanent_address"><?php echo __('Permanent Address'); ?> <span class="text-danger">*</span></label>
-                            <div class="form-group<?php echo $errors->has('permanent_address') ? ' has-error' : ''; ?> has-feedback">
-                                <input type="text" name="permanent_address" id="permanent_address" class="form-control" value="<?php echo $user['permanent_address']; ?>" placeholder="<?php echo __('Enter contact no..'); ?>">
-                                <?php if($errors->has('permanent_address')): ?>
-                                <span class="help-block">
-                                    <strong><?php echo $errors->first('permanent_address'); ?></strong>
                                 </span>
                                 <?php endif; ?>
                             </div>
@@ -150,7 +118,7 @@
                             <div class="form-group<?php echo $errors->has('date_of_birth') ? ' has-error' : ''; ?> has-feedback">
                                 <div class="input-group date">
                                     <div class="input-group-addon"><i class="fa fa-calendar"></i></div>
-                                    <input type="text" name="date_of_birth" class="form-control pull-right" value="<?php echo $user['date_of_birth']; ?>" id="datepicker">
+                                    <input type="text" name="date_of_birth" class="form-control pull-right" value="<?php echo old('date_of_birth'); ?>" id="datepicker">
                                 </div>
                                 <?php if($errors->has('date_of_birth')): ?>
                                 <span class="help-block">
@@ -161,19 +129,39 @@
                             <!-- /.form-group -->
                         </div>
                         <!-- /.col -->
+
                         <div class="col-md-6">
-                            <?php if(!empty($user['avatar'])): ?>
-                            <img src="<?php echo url('/public/profile_picture/' . $user['avatar']); ?>" alt="$user['avatar']" class="img-responsive img-thumbnail">
-                            <?php else: ?>
-                            <img src="<?php echo url('/public/profile_picture/blank_profile_picture.png'); ?>" alt="blank_profile_picture" class="img-responsive img-thumbnail">
-                            <?php endif; ?>
+                            <label for="present_address"><?php echo __('Address'); ?><span class="text-danger">*</span></label>
+                            <div class="form-group<?php echo $errors->has('present_address') ? ' has-error' : ''; ?> has-feedback">
+                                <input type="text" name="present_address" id="present_address" class="form-control" value="<?php echo old('present_address'); ?>" placeholder="<?php echo __('Enter address..'); ?>">
+                                <?php if($errors->has('present_address')): ?>
+                                <span class="help-block">
+                                    <strong><?php echo $errors->first('present_address'); ?></strong>
+                                </span>
+                                <?php endif; ?>
+                            </div>
+                            <!-- /.form-group -->
+
+                            <label for="contact_no_two"><?php echo __('Contact No (Optional)'); ?></label>
+                            <div class="form-group<?php echo $errors->has('contact_no_two') ? ' has-error' : ''; ?> has-feedback">
+                                <input type="text" name="contact_no_two" id="contact_no_two" class="form-control" value="<?php echo old('contact_no_two'); ?>" placeholder="<?php echo __('Enter address..'); ?>">
+                                <?php if($errors->has('contact_no_two')): ?>
+                                <span class="help-block">
+                                    <strong><?php echo $errors->first('contact_no_two'); ?></strong>
+                                </span>
+                                <?php endif; ?>
+                            </div>
+                            <!-- /.form-group -->
+
                         </div>
+                        <!-- /.col -->
                     </div>
                     <!-- /.row -->
                 </div>
                 <!-- /.box-body -->
                 <div class="box-footer">
-                    <button type="submit" class="btn btn-primary btn-flat"><i class="icon fa fa-edit"></i> <?php echo __('Update Profile'); ?></button>
+                    <a href="<?php echo url('/people/references'); ?>" class="btn btn-danger btn-flat"><i class="icon fa fa-close"></i> <?php echo __('Cancel'); ?></a>
+                    <button type="submit" class="btn btn-primary btn-flat"><i class="icon fa fa-plus"></i><?php echo __(' Add reference'); ?></button>
                 </div>
             </form>
         </div>
@@ -182,7 +170,8 @@
     <!-- /.content -->
 </div>
 <script type="text/javascript">
-    document.forms['user_edit_form'].elements['gender'].value = "<?php echo $user['gender']; ?>";
+    document.forms['reference_add_form'].elements['gender'].value = "<?php echo old('gender'); ?>";
+    document.forms['reference_add_form'].elements['designation_id'].value = "<?php echo old('designation_id'); ?>";
 </script>
 <?php $__env->stopSection(); ?>
 

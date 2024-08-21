@@ -122,6 +122,8 @@
                 <li><a href="<?php echo url('/setting/leave_categories/create'); ?>"><i class="fa fa-circle-o"></i><?php echo __('New Leave Category'); ?></a></li>
                 <li><a href="<?php echo url('/setting/leave_categories'); ?>"><i class="fa fa-circle-o"></i><?php echo __('Leave Category List'); ?></a></li>
                 <li><a href="<?php echo url('/hrm/application_lists'); ?>"><i class="fa fa-circle-o"></i> <span><?php echo __('Leave Application List'); ?></span></a></li>
+
+                <li><a href="<?php echo url('/hrm/leave'); ?>"><i class="fa fa-circle-o"></i> <span><?php echo __('New Leave Apply'); ?></span></a></li>
                 <?php endif; // Entrust::can ?>
                 <?php if (\Entrust::can('my-leave-application')) : ?>
                 <li><a href="<?php echo url('/hrm/leave_application/create'); ?>"><i class="fa fa-circle-o"></i> <span><?php echo __('New Leave Application'); ?></span></a></li>
@@ -210,6 +212,9 @@
                 <li><a href="<?php echo url('/setting/award_categories'); ?>"><i class="fa fa-circle-o"></i> <?php echo __('Manage Award Categories'); ?></a></li>
                 <?php if (\Entrust::can('role')) : ?>
                 <li><a href="<?php echo route('setting.role.index'); ?>"><i class="fa fa-circle-o"></i><?php echo __('Role'); ?></a></li>
+                <?php endif; // Entrust::can ?>
+                <?php if (\Entrust::can('manage-bankdetails')) : ?>
+                <li><a href="<?php echo route('setting.bank_details.index'); ?>"><i class="fa fa-circle-o"></i><?php echo __('Bank Details'); ?></a></li>
                 <?php endif; // Entrust::can ?>
             </ul>
         </li>

@@ -60,6 +60,59 @@
                                 </span>
                                 @endif
                             </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="item">{{ __('Item') }} <span class="text-danger">*</span></label>
+                                <div class="form-group{{ $errors->has('item') ? ' has-error' : '' }} has-feedback">
+                                    <input type="text" name="item" id="item" class="form-control" value="{{ old('item', isset($leave_category) ? $leave_category['item'] : '') }}" placeholder="{{ __('Enter item..') }}">
+                                    @if ($errors->has('item'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('item') }}</strong>
+                                    </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="qty">{{ __('Quantity') }} <span class="text-danger">*</span></label>
+                                <div class="form-group{{ $errors->has('qty') ? ' has-error' : '' }} has-feedback">
+                                    <input type="number" name="qty" id="qty" class="form-control" value="{{ old('qty', isset($leave_category) ? $leave_category['qty'] : '') }}" placeholder="{{ __('Enter quantity..') }}">
+                                    @if ($errors->has('qty'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('qty') }}</strong>
+                                    </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="remarks">{{ __('Remarks') }}</label>
+                                <div class="form-group{{ $errors->has('remarks') ? ' has-error' : '' }} has-feedback">
+                                    <textarea name="remarks" id="remarks" class="form-control" placeholder="{{ __('Enter remarks..') }}">{{ old('remarks', isset($leave_category) ? $leave_category['remarks'] : '') }}</textarea>
+                                    @if ($errors->has('remarks'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('remarks') }}</strong>
+                                    </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="type_of_leave">{{ __('Type of Leave') }} <span class="text-danger">*</span></label>
+                                <div class="form-group{{ $errors->has('type_of_leave') ? ' has-error' : '' }} has-feedback">
+                                    <select name="type_of_leave" id="type_of_leave" class="form-control">
+                                        <option value="" selected disabled>{{ __('Select type of leave') }}</option>
+                                        <option value="carry_forward" {{ old('type_of_leave', isset($leave_category) ? $leave_category['type_of_leave'] : '') == 'carry_forward' ? 'selected' : '' }}>{{ __('Carry Forward') }}</option>
+                                        <option value="paid" {{ old('type_of_leave', isset($leave_category) ? $leave_category['type_of_leave'] : '') == 'paid' ? 'selected' : '' }}>{{ __('Paid') }}</option>
+                                    </select>
+                                    @if ($errors->has('type_of_leave'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('type_of_leave') }}</strong>
+                                    </span>
+                                    @endif
+                                </div>
+                            </div>
+                        <div class="col-md-6">
                             <!-- /.form-group -->
                             <label for="publication_status">{{ __('Publication Status') }} <span class="text-danger">*</span></label>
                             <div class="form-group{{ $errors->has('publication_status') ? ' has-error' : '' }} has-feedback">

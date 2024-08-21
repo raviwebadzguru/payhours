@@ -42,20 +42,27 @@ class LeaveCatController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request) {
-        $leave_category = $this->validate(request(), [
+        $validatedData = $request->validate([
             'leave_category' => 'required|unique:leave_categories|max:100',
             'publication_status' => 'required',
             'leave_category_description' => 'required',
+            'item' => 'required|string|max:255',
+            'qty' => 'required|integer',
+            'remarks' => 'nullable|string|max:500',
+            'type_of_leave' => 'required|in:carry_forward,paid',
         ]);
-
-        $result = LeaveCategory::create($leave_category + ['created_by' => auth()->user()->id]);
+    
+        $leave_category = array_merge($validatedData, ['created_by' => auth()->user()->id]);
+    
+        $result = LeaveCategory::create($leave_category);
         $inserted_id = $result->id;
-
-        if (!empty($inserted_id)) {
+    
+        if ($inserted_id) {
             return redirect('/setting/leave_categories/create')->with('message', 'Add successfully.');
         }
         return redirect('/setting/leave_categories/create')->with('exception', 'Operation failed !');
     }
+    
 
     /**
      * Update the specified resource in storage.
@@ -131,22 +138,25 @@ class LeaveCatController extends Controller
      */
     public function update(Request $request, $id) {
         $leave_category = LeaveCategory::find($id);
-        $this->validate(request(), [
+    
+        $validatedData = $request->validate([
             'leave_category' => 'required|max:100',
             'publication_status' => 'required',
             'leave_category_description' => 'required',
+            'item' => 'required|string|max:255',
+            'qty' => 'required|integer',
+            'remarks' => 'nullable|string|max:500',
+            'type_of_leave' => 'required|in:carry_forward,paid',
         ]);
-
-        $leave_category->leave_category = $request->get('leave_category');
-        $leave_category->leave_category_description = $request->get('leave_category_description');
-        $leave_category->publication_status = $request->get('publication_status');
-        $affected_row = $leave_category->save();
-
-        if (!empty($affected_row)) {
+    
+        $leave_category->update($validatedData);
+    
+        if ($leave_category) {
             return redirect('/setting/leave_categories')->with('message', 'Update successfully.');
         }
         return redirect('/setting/leave_categories')->with('exception', 'Operation failed !');
     }
+    
 
     /**
      * Remove the specified resource from storage.

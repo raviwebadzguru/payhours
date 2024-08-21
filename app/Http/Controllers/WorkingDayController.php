@@ -28,7 +28,7 @@ class WorkingDayController extends Controller {
 		$id = 1;
 		for ($i = 0; $i < count($request->day); $i++) {
 			$affected_row = WorkingDay::where('id', $id++)
-				->update(['working_status' => $request->day[$i]]);
+				->update(['working_status' => $request->day[$i], 'working_hours' => $request->working_hours[$i]]);
 		}
 		return redirect('/setting/working-days')->with('message', 'Update successfully.');
 	}
